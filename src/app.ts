@@ -5,6 +5,7 @@ import { createConnection } from "typeorm";
 
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
+import departmentRoutes from "./routes/department.routes";
 
 const app = express();
 
@@ -30,5 +31,8 @@ app.use('/api/auth', authRoutes);
 
 // User Routes
 app.use('/api/users', userRoutes);
+
+// Department Routes
+app.use('/api/departments', departmentRoutes);
 
 export default app;
