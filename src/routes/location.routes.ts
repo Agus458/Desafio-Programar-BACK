@@ -10,10 +10,10 @@ router.post('/', [verifyToken], LocationController.createLocation);
 
 router.get('/', [verifyToken], LocationController.getLocations);
 
-router.get('/:name', [verifyToken], LocationController.getLocation);
+router.get('/:id', [verifyToken], LocationController.getLocation);
 
-router.put('/:name', [verifyToken], LocationController.putLocation);
+router.put('/:id', [verifyToken], LocationController.putLocation);
 
-router.delete('/:name', [verifyToken], LocationController.deleteLocation);
+router.delete('/:id', [verifyToken], LocationController.deleteLocation);
 
 export default router;
