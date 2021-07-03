@@ -11,6 +11,6 @@ export class Department extends BaseEntity{
     @Column({ unique: true })
     name: string;
 
-    @OneToMany( () => Location, location => location.department)
+    @OneToMany( () => Location, location => location.department,{cascade: true})
     locations: Location[];
 }
