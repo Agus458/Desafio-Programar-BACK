@@ -23,11 +23,11 @@ export const getDepartments = async (request: Request, response: Response): Prom
 }
 
 export const getDepartment = async (request: Request, response: Response): Promise<Response> => {
-    return response.status(200).json(await getRepository(Department).findOne({ where: { name: request.params.name } }));
+    return response.status(200).json(await getRepository(Department).findOne({ where: { id: request.params.id }, relations: ['locations'] }));
 }
 
 export const putDepartment = async (request: Request, response: Response): Promise<Response> => {
-    let department = await getRepository(Department).findOne({ where: { name: request.params.name } })
+    let department = await getRepository(Department).findOne({ where: { id: request.params.id } })
 
     if (!department) return response.status(404).json({ message: 'No existe un departamento con ese nombre' });
 
@@ -41,7 +41,7 @@ export const putDepartment = async (request: Request, response: Response): Promi
 }
 
 export const deleteDepartment = async (request: Request, response: Response): Promise<Response> => {
-    if (!await getRepository(Department).findOne({ where: { name: request.params.name } })) return response.status(400).json({ message: 'No existe un departamento con ese nombre' });
+    if (!await getRepository(Department).findOne({ where: { id: request.params.id } })) return response.status(400).json({ message: 'No existe un departamento con ese nombre' });
 
-    return response.json(await getRepository(Department).delete({name: request.params.name}));
+    return response.json(await getRepository(Department).delete(request.params.id));
 }
