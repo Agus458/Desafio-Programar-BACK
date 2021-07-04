@@ -32,20 +32,20 @@ export const updatePerson = async (request: Request, response: Response): Promis
 
     if (!person) return response.status(400).json({ message: 'No existe ninguna persona con ese id' });
 
-    if (request.params.name) person.name = request.params.name;
-    if (request.params.lastname) person.lastname = request.params.lastname;
-    if (request.params.email) {
+    if (request.body.name) person.name = request.body.name;
+    if (request.body.lastname) person.lastname = request.body.lastname;
+    if (request.body.email) {
         if (await getRepository(Person).findOne({ where: { email: request.body.email } })) return response.status(400).json({ message: 'Ya existe una persona con ese email' });
-        person.email = request.params.email
+        person.email = request.body.email
     };
-    if (request.params.phone) {
+    if (request.body.phone) {
         if (await getRepository(Person).findOne({ where: { phone: request.body.phone } })) return response.status(400).json({ message: 'Ya existe una persona con ese telefono' });
-        person.phone = request.params.phone
+        person.phone = request.body.phone
     };
 
     let updatedPerson = await getRepository(Person).save(person);
 
-    return response.status(200).json(updatePerson);
+    return response.status(200).json(updatedPerson);
 }
 
 export const deletePerson = async (request: Request, response: Response): Promise<Response> => {
