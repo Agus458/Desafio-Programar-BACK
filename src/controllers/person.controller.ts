@@ -34,11 +34,11 @@ export const updatePerson = async (request: Request, response: Response): Promis
 
     if (request.body.name) person.name = request.body.name;
     if (request.body.lastname) person.lastname = request.body.lastname;
-    if (request.body.email) {
+    if (request.body.email && request.body.email != person.email) {
         if (await getRepository(Person).findOne({ where: { email: request.body.email } })) return response.status(400).json({ message: 'Ya existe una persona con ese email' });
         person.email = request.body.email
     };
-    if (request.body.phone) {
+    if (request.body.phone && request.body.phone != person.phone) {
         if (await getRepository(Person).findOne({ where: { phone: request.body.phone } })) return response.status(400).json({ message: 'Ya existe una persona con ese telefono' });
         person.phone = request.body.phone
     };
