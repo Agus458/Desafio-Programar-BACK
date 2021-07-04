@@ -16,4 +16,12 @@ router.put('/:rut', [verifyToken], BusinessController.putBusiness);
 
 router.delete('/:rut', [verifyToken], BusinessController.deleteBusiness);
 
+/* ----- Businnes_Person Routes ----- */
+
+router.post('/addPerson', [verifyToken], BusinessController.addPerson);
+
+router.put('/putBP/:id', [verifyToken], BusinessController.putBP);
+
+router.delete('/deleteBP/:id', [verifyToken], BusinessController.deleteBP);
+
 export default router;
