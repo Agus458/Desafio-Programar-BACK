@@ -1,6 +1,7 @@
 import { getRepository } from "typeorm";
 import { Role } from "../models/Role";
 import { User } from "../models/User";
+import { encryptPassword } from "./encriptation";
 
 export const createInitialData = async () => {
     if (await getRepository(Role).count() === 0) {
@@ -15,7 +16,7 @@ export const createInitialData = async () => {
         let adminRole = await getRepository(Role).findOne({ where: { name: "Admin" } });
 
         if (adminRole) {
-            let admin = getRepository(User).create({ userName: "Admin", email: "admin@admin.com", password: "admin", roles: [adminRole] });
+            let admin = getRepository(User).create({ userName: "Admin", email: "admin@admin.com", password: await encryptPassword("admin"), roles: [adminRole] });
             await getRepository(User).save(admin);
         }
     }

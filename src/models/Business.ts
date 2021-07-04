@@ -1,22 +1,23 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Business_Person } from "./Business_Person";
 import { Department } from "./Department";
 import { Location } from "./Location";
 
 
 @Entity('businesses')
-export class Business extends BaseEntity{
+export class Business extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ unique: true })
     businessName: string;
-    
+
     @Column({ nullable: true })
     nameFantasy: string;
 
     @Column({ unique: true })
-    rut:string;
+    rut: string;
 
     @Column({ nullable: true })
     address: string;
@@ -50,10 +51,10 @@ export class Business extends BaseEntity{
 
     @Column({ nullable: true })
     affiliationDate: Date;
-   
+
     @Column({ nullable: true })
     initDate: Date;
-   
+
     @Column({ nullable: true })
     state: boolean;
 
@@ -65,4 +66,8 @@ export class Business extends BaseEntity{
 
     @Column({ nullable: true })
     logo: string;
+
+    @OneToMany(() => Business_Person, business_person => business_person.bussiness)
+    persons: Business_Person[]
+
 }

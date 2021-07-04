@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import departmentRoutes from "./routes/department.routes";
 import businessRoutes from "./routes/business.routes";
+import personRoutes from "./routes/person.routes";
 
 const app = express();
 
@@ -38,5 +39,8 @@ app.use('/api/departments', departmentRoutes);
 
 // Business Routes
 app.use('/api/businesses', businessRoutes);
+
+// Person Routes
+app.use('/api/persons', personRoutes);
 
 export default app;
