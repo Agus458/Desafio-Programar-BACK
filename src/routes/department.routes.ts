@@ -10,10 +10,10 @@ router.post('/', [verifyToken], DepartmentController.createDepartment);
 
 router.get('/', [verifyToken], DepartmentController.getDepartments);
 
-router.get('/:name', [verifyToken], DepartmentController.getDepartment);
+router.get('/:id', [verifyToken], DepartmentController.getDepartment);
 
-router.put('/:name', [verifyToken], DepartmentController.putDepartment);
+router.put('/:id', [verifyToken], DepartmentController.putDepartment);
 
-router.delete('/:name', [verifyToken], DepartmentController.deleteDepartment);
+router.delete('/:id', [verifyToken], DepartmentController.deleteDepartment);
 
 export default router;
