@@ -10,14 +10,17 @@ import { Person } from "../models/Person";
 export const createBusiness = async (request: Request, response: Response): Promise<Response> => {
 
     if (!request.body.rut) return response.status(400).json({ message: 'No se ingresó el RUT de la empresa' });
+    if (!request.body.businessName) return response.status(400).json({ message: 'No se ingresó el Nombre de la empresa' });
+    if (!request.body.email) return response.status(400).json({ message: 'No se ingresó el email de la empresa' });
 
     if (await getRepository(Business).findOne({ where: { rut: request.body.rut } })) return response.status(400).json({ message: 'Ya existe un empresa con ese RUT' });
+    if (await getRepository(Business).findOne({ where: { rut: request.body.email } })) return response.status(400).json({ message: 'Ya existe un empresa con ese email' });
+    if (await getRepository(Business).findOne({ where: { rut: request.body.businessName } })) return response.status(400).json({ message: 'Ya existe un empresa con ese Nombre' });
 
     let newBusiness = getRepository(Business).create(request.body);
     let savedBusiness = await getRepository(Business).save(newBusiness);
 
     return response.status(201).json(savedBusiness);
-
 }
 
 export const getBusinesses = async (request: Request, response: Response): Promise<Response> => {
@@ -32,11 +35,11 @@ export const getBusiness = async (request: Request, response: Response): Promise
 export const putBusiness = async (request: Request, response: Response): Promise<Response> => {
     let business = await getRepository(Business).findOne({ where: { rut: request.params.rut } })
 
-    if (!business) return response.status(404).json({ message: 'No existe una empresa con ese nombre' });
+    if (!business) return response.status(404).json({ message: 'No existe una empresa con ese RUT' });
 
-    if (!request.body.rut) return response.status(400).json({ message: 'No se ingresó el RUT de la empresa' });
-
-    if (await getRepository(Business).findOne({ where: { rut: request.body.rut } })) return response.status(400).json({ message: 'Ya existe una empresa con ese RUT' });
+    if (request.body.rut && request.body.rut != business.rut) {
+        if (await getRepository(Business).findOne({ where: { rut: request.body.rut } })) return response.status(400).json({ message: 'Ya existe una empresa con ese RUT' });
+    }
 
     business = request.body;
     if (business) {
@@ -51,6 +54,8 @@ export const deleteBusiness = async (request: Request, response: Response): Prom
     if (!business) {
         return response.status(400).json({ message: 'No existe una empresa con ese RUT' });
     } else {
+        await getRepository(Business_Person).delete({bussiness: business});
+
         return response.json(await getRepository(Business).delete(business));
     }
 }
@@ -61,18 +66,18 @@ export const addPerson = async (request: Request, response: Response): Promise<R
     if (!request.body.personId) return response.status(400).json({ message: 'No se ingresó una persona' });
     if (!request.body.businessId) return response.status(400).json({ message: 'No se ingresó una empresa' });
     if (!request.body.tipo) return response.status(400).json({ message: 'No se ingresó un tipo' });
-    
-    let business_person = await getRepository(Business_Person).findOne({where: {person: request.body.personId, bussiness: request.body.businessId}})
 
-    if(business_person){
+    let business = await getRepository(Business).findOne({ where: { id: request.body.businessId } });
+    let person = await getRepository(Person).findOne({ where: { id: request.body.personId } });
+
+    if (!business) return response.status(400).json({ message: 'No existe esa empresa' });
+    if (!person) return response.status(400).json({ message: 'No existe esa persona' });
+
+    let business_person = await getRepository(Business_Person).findOne({ where: { person: person, bussiness: business } })
+
+    if (business_person) {
         return response.status(400).json({ message: 'Ya existe esta persona en la empresa' });
     }
-
-    let business = await getRepository(Business).findOne({where: {id: request.body.businessId}, relations: ['persons']});
-    let person = await getRepository(Person).findOne({where: {id: request.body.personId}, relations: ['bussinesses']});
-
-    if(!business) return response.status(400).json({ message: 'No existe esa empresa' });
-    if(!person) return response.status(400).json({ message: 'No existe esa persona' });
 
     let newBP = {
         person: person,
@@ -81,25 +86,11 @@ export const addPerson = async (request: Request, response: Response): Promise<R
     };
     let createdBP = getRepository(Business_Person).create(newBP);
 
-    business?.persons.push(createdBP);
-    person?.bussinesses.push(createdBP);
-
-    let result1;
-    let result2;
-
-    if(business){
-        result1 = await getRepository(Business).save(business);
-    };
-    if(person){
-        result2 = await getRepository(Person).save(person);
-    };
-    
-
-    return response.status(201).json(result1);
-
+    let result = await getRepository(Business_Person).save(createdBP);
+    return response.status(201).json(result);
 }
 
-export const putBP =  async (request: Request, response: Response): Promise<Response> => {
+export const putBP = async (request: Request, response: Response): Promise<Response> => {
     let BP = await getRepository(Business_Person).findOne({ where: { id: request.params.id } })
 
     if (!BP) return response.status(404).json({ message: 'No existe esa relación de persona/empresa' });
@@ -115,4 +106,15 @@ export const deleteBP = async (request: Request, response: Response): Promise<Re
     if (!await getRepository(Business_Person).findOne({ where: { id: request.params.id } })) return response.status(400).json({ message: 'No existe esa relación de persona/empresa' });
 
     return response.json(await getRepository(Business_Person).delete(request.params.id));
+}
+
+export const getPersonsBusiness = async (request: Request, response: Response): Promise<Response> => {
+    let business = await getRepository(Business).findOne({ where: { id: request.params.id } });
+    if (!business) return response.status(400).json({ message: 'No existe esa empresa' });
+
+    let bussiness_persons = await getRepository(Business_Person).find({
+        where: { bussiness: business }, relations: ['person']
+    });
+
+    return response.status(200).json(bussiness_persons);
 }

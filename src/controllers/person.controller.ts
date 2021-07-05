@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
+import { Business_Person } from "../models/Business_Person";
 import { Person } from "../models/Person";
 
 /* ----- Person Controller ----- */
@@ -49,7 +50,10 @@ export const updatePerson = async (request: Request, response: Response): Promis
 }
 
 export const deletePerson = async (request: Request, response: Response): Promise<Response> => {
-    if (!await getRepository(Person).findOne(request.params.id)) return response.status(400).json({ message: 'No existe ninguna persona con ese id' });
+    let person = await getRepository(Person).findOne(request.params.id);
+    if (!person) return response.status(400).json({ message: 'No existe ninguna persona con ese id' });
+
+    await getRepository(Business_Person).delete({person});
 
     return response.status(200).json(await getRepository(Person).delete(request.params.id));
 }
