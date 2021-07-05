@@ -21,13 +21,13 @@ export const createBusiness = async (request: Request, response: Response): Prom
     if (await getRepository(Business).findOne({ where: { rut: request.body.rut } })) return response.status(400).json({ message: 'Ya existe un empresa con ese RUT' });
     if (await getRepository(Business).findOne({ where: { rut: request.body.email } })) return response.status(400).json({ message: 'Ya existe un empresa con ese email' });
     if (await getRepository(Business).findOne({ where: { rut: request.body.businessName } })) return response.status(400).json({ message: 'Ya existe un empresa con ese Nombre' });
-    let department = await getRepository(Department).findOne({where: {id: request.body.departmentId}});
-    let location = await getRepository(Location).findOne({where: {id: request.body.locationId}});
+    let department = await getRepository(Department).findOne({ where: { id: request.body.departmentId } });
+    let location = await getRepository(Location).findOne({ where: { id: request.body.locationId } });
 
-    if(!location) return response.status(400).json({ message: 'No existe localidad' });
-    if(!department) return response.status(400).json({ message: 'No existe departamento' });
+    if (!location) return response.status(400).json({ message: 'No existe localidad' });
+    if (!department) return response.status(400).json({ message: 'No existe departamento' });
 
-    let { rut, email, businessName, nameFantasy, address, cellphone, phone, BPS, occupation, initDate, observations, logo} = request.body;
+    let { rut, email, businessName, nameFantasy, address, cellphone, phone, BPS, occupation, initDate, observations, logo } = request.body;
 
     let role = await getRepository(Role).findOne({ where: { name: 'Empresa' } });
 
@@ -49,8 +49,6 @@ export const createBusiness = async (request: Request, response: Response): Prom
 }
 
 export const getBusinesses = async (request: Request, response: Response): Promise<Response> => {
-    console.log(request.body.user);
-    
     return response.status(200).json(await getRepository(Business).find());
 }
 
@@ -58,7 +56,7 @@ export const getBusiness = async (request: Request, response: Response): Promise
     return response.status(200).json(await getRepository(Business).findOne({ where: { id: request.params.id } }));
 }
 
-export const  goDown = async (request: Request, response: Response): Promise<Response> => {
+export const goDown = async (request: Request, response: Response): Promise<Response> => {
     let business = await getRepository(Business).findOne({ where: { id: request.params.id } });
 
     if (!business) return response.status(404).json({ message: 'No existe una empresa con ese id' });
@@ -70,8 +68,8 @@ export const  goDown = async (request: Request, response: Response): Promise<Res
 
 //Arreglar un poquito pero anda
 export const putBusiness = async (request: Request, response: Response): Promise<Response> => {
-    let business = await getRepository(Business).findOne({ where: { id: request.params.id } })
-
+    let business = await getRepository(Business).findOne({ where: { id: request.params.id }, relations: ['user'] });
+    
     if (!business) return response.status(404).json({ message: 'No existe una empresa con ese id' });
 
     if (request.body.rut && request.body.rut != business.rut) {
@@ -80,17 +78,19 @@ export const putBusiness = async (request: Request, response: Response): Promise
 
     if (request.body.email && request.body.email != business.email) {
         if (await getRepository(Business).findOne({ where: { email: request.body.email } })) return response.status(400).json({ message: 'Ya existe una empresa con ese email' });
+        await getRepository(User).update(business.user.id, { email: request.body.email })
     }
 
     if (request.body.businessName && request.body.businessName != business.businessName) {
         if (await getRepository(Business).findOne({ where: { businessName: request.body.businessName } })) return response.status(400).json({ message: 'Ya existe una empresa con ese Nombre' });
+        await getRepository(User).update(business.user.id, { userName: request.body.businessName });
     }
 
-    if (business) {
-        return response.status(200).json(await getRepository(Business).update(business, request.body));
-    } else {
-        return response.status(400).json({ message: 'Response vacio' });
-    }
+    let { rut, email, businessName, nameFantasy, address, cellphone, phone, BPS, occupation, initDate, observations, logo } = request.body;
+
+    return response.status(200).json(await getRepository(Business).update(business.id, {
+        rut, email, businessName, nameFantasy, address, cellphone, phone, BPS, occupation, initDate, observations, logo
+    }));
 }
 
 export const deleteBusiness = async (request: Request, response: Response): Promise<Response> => {

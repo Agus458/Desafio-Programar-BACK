@@ -9,11 +9,11 @@ import { verifyToken } from '../middlewares/verifyToken';
 
 router.post('/', [verifyToken, isAdmin], BusinessController.createBusiness);
 
-router.get('/', [verifyToken], BusinessController.getBusinesses);
+router.get('/', [verifyToken, isAdmin], BusinessController.getBusinesses);
 
-router.get('/:id', [verifyToken], BusinessController.getBusiness);
+router.get('/:id', [verifyToken, isAdmin], BusinessController.getBusiness);
 
-router.put('/:id', [verifyToken], BusinessController.putBusiness);
+router.put('/:id', [verifyToken, isAdmin], BusinessController.putBusiness);
 
 router.delete('/:id', [verifyToken, isAdmin], BusinessController.deleteBusiness);
 

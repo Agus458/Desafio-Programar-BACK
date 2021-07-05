@@ -25,7 +25,7 @@ export const verifyToken = async (request: Request, response: Response, next: Ne
         if (!user) return response.status(403).json({ message: 'No existe el usuario' });
 
         Object.assign(request.body, { id });
-        Object.assign(request.body, { user });
+        Object.assign(request.body, { userLogged: user });
         
         next();
     } else {

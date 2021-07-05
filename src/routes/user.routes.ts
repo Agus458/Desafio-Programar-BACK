@@ -8,4 +8,8 @@ import { verifyToken } from '../middlewares/verifyToken';
 
 router.get('/profile', [verifyToken], UserController.getProfile);
 
+router.get('/business', [verifyToken], UserController.getBusiness);
+
+router.put('/business', [verifyToken], UserController.putBusiness);
+
 export default router;
