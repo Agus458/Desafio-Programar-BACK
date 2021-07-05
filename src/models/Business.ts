@@ -71,7 +71,7 @@ export class Business extends BaseEntity {
     @OneToMany(() => Business_Person, business_person => business_person.bussiness)
     persons: Business_Person[]
 
-    @OneToOne(() => User, user => user.business)
+    @OneToOne(() => User, user => user.business, { cascade: true })
     user: User;
-    
+
 }

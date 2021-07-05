@@ -7,6 +7,6 @@ import * as AuthController from '../controllers/auth.controller';
 
 router.post('/signin', AuthController.signin);
 
-router.post('/signup', AuthController.signup);
+// router.post('/signup', AuthController.signup);
 
 export default router;

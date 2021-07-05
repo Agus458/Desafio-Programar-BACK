@@ -21,10 +21,11 @@ export const verifyToken = async (request: Request, response: Response, next: Ne
 
         // Validate user exists
         let { id } = decoded as any;
-        const user = await getRepository(User).findOne(id);
+        const user = await getRepository(User).findOne(id, {relations: ['roles', 'business']});
         if (!user) return response.status(403).json({ message: 'No existe el usuario' });
 
         Object.assign(request.body, { id });
+        Object.assign(request.body, { user });
         
         next();
     } else {

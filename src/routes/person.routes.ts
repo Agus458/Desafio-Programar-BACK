@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as PersonController from '../controllers/person.controller';
+import { isAdmin } from '../middlewares/isAdmin';
 const router = Router();
 
 import { verifyToken } from '../middlewares/verifyToken';
@@ -10,10 +11,10 @@ router.get('/', [verifyToken], PersonController.getPersons);
 
 router.get('/:id', [verifyToken], PersonController.getPerson);
 
-router.post('/', [verifyToken], PersonController.createPerson);
+router.post('/', [verifyToken, isAdmin], PersonController.createPerson);
 
-router.put('/:id', [verifyToken], PersonController.updatePerson);
+router.put('/:id', [verifyToken, isAdmin], PersonController.updatePerson);
 
-router.delete('/:id', [verifyToken], PersonController.deletePerson);
+router.delete('/:id', [verifyToken, isAdmin], PersonController.deletePerson);
 
 export default router;

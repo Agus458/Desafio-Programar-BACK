@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, OneToOne, JoinColumn } from "typeorm";
 import { Business } from "./Business";
 import { Role } from "./Role";
 
@@ -24,5 +24,6 @@ export class User extends BaseEntity {
     roles: Role[]
 
     @OneToOne(() => Business, business => business.user)
+    @JoinColumn()
     business: Business;
 }

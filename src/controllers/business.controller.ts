@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
 import { request } from "http";
 import { getRepository } from "typeorm";
+import { encryptPassword } from "../libs/encriptation";
 import { Business } from "../models/Business";
 import { Business_Person } from "../models/Business_Person";
 import { Person } from "../models/Person";
+import { Role } from "../models/Role";
+import { User } from "../models/User";
 
 /* ----- Business Controller ----- */
 
@@ -17,10 +20,21 @@ export const createBusiness = async (request: Request, response: Response): Prom
     if (await getRepository(Business).findOne({ where: { rut: request.body.email } })) return response.status(400).json({ message: 'Ya existe un empresa con ese email' });
     if (await getRepository(Business).findOne({ where: { rut: request.body.businessName } })) return response.status(400).json({ message: 'Ya existe un empresa con ese Nombre' });
 
-    let { rut, email, businessName } = request.body;
+    let { rut, email, businessName, departmentId, locationId } = request.body;
+
+    let role = await getRepository(Role).findOne({ where: { name: 'Empresa' } });
+
+    if (!role) return response.status(500).json({ message: 'Error al registrar la empresa' })
+
+    let user = getRepository(User).create({
+        email: email,
+        userName: businessName,
+        password: await encryptPassword(businessName),
+        roles: [role]
+    });
 
     let newBusiness = getRepository(Business).create({
-        rut, businessName, email
+        rut, businessName, email, user
     });
     let savedBusiness = await getRepository(Business).save(newBusiness);
 
@@ -28,6 +42,8 @@ export const createBusiness = async (request: Request, response: Response): Prom
 }
 
 export const getBusinesses = async (request: Request, response: Response): Promise<Response> => {
+    console.log(request.body.user);
+    
     return response.status(200).json(await getRepository(Business).find());
 }
 
@@ -61,11 +77,12 @@ export const putBusiness = async (request: Request, response: Response): Promise
 }
 
 export const deleteBusiness = async (request: Request, response: Response): Promise<Response> => {
-    let business = await getRepository(Business).findOne({ where: { id: request.params.id } })
+    let business = await getRepository(Business).findOne({ where: { id: request.params.id }, relations: ['user'] })
     if (!business) {
         return response.status(400).json({ message: 'No existe una empresa con ese id' });
     } else {
         await getRepository(Business_Person).delete({ bussiness: business });
+        await getRepository(User).delete(business.user);
 
         return response.json(await getRepository(Business).delete(business));
     }

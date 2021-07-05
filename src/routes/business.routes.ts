@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import * as BusinessController from '../controllers/business.controller';
+import { isAdmin } from '../middlewares/isAdmin';
 const router = Router();
 
 import { verifyToken } from '../middlewares/verifyToken';
 
 /* ----- Businnes Routes ----- */
 
-router.post('/', [verifyToken], BusinessController.createBusiness);
+router.post('/', [verifyToken, isAdmin], BusinessController.createBusiness);
 
 router.get('/', [verifyToken], BusinessController.getBusinesses);
 
@@ -14,7 +15,7 @@ router.get('/:id', [verifyToken], BusinessController.getBusiness);
 
 router.put('/:id', [verifyToken], BusinessController.putBusiness);
 
-router.delete('/:id', [verifyToken], BusinessController.deleteBusiness);
+router.delete('/:id', [verifyToken, isAdmin], BusinessController.deleteBusiness);
 
 /* ----- Businnes_Person Routes ----- */
 
