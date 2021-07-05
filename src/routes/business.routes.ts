@@ -18,6 +18,8 @@ router.delete('/:id', [verifyToken], BusinessController.deleteBusiness);
 
 /* ----- Businnes_Person Routes ----- */
 
+router.get('/persons/:id', [verifyToken], BusinessController.getPersonsBusiness);
+
 router.post('/addPerson', [verifyToken], BusinessController.addPerson);
 
 router.put('/putBP/:id', [verifyToken], BusinessController.putBP);
