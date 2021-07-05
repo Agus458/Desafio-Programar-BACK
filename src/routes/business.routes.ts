@@ -17,6 +17,8 @@ router.put('/:id', [verifyToken], BusinessController.putBusiness);
 
 router.delete('/:id', [verifyToken, isAdmin], BusinessController.deleteBusiness);
 
+router.get('/goDown/:id', [verifyToken], BusinessController.goDown),
+
 /* ----- Businnes_Person Routes ----- */
 
 router.get('/persons/:id', [verifyToken], BusinessController.getPersonsBusiness);

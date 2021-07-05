@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Business_Person } from "./Business_Person";
 import { Department } from "./Department";
 import { Location } from "./Location";
@@ -42,21 +42,19 @@ export class Business extends BaseEntity {
     Nro Referencia (opcional), Rubro de Actividad Secundaria (opcional),
     */
 
-    @OneToOne(() => Department)
-    @JoinColumn()
-    departament: Department;
+    @ManyToOne(() => Department)
+    department: Department;
 
-    @OneToOne(() => Location)
-    @JoinColumn()
+    @ManyToOne(() => Location)
     location: Location;
 
-    @Column({ nullable: true })
+    @CreateDateColumn()
     affiliationDate: Date;
 
     @Column({ nullable: true })
     initDate: Date;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: true})
     state: boolean;
 
     @Column({ nullable: true })
