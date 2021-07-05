@@ -3,7 +3,9 @@ import { request } from "http";
 import { getRepository } from "typeorm";
 import { Business } from "../models/Business";
 import { Business_Person } from "../models/Business_Person";
+import { Department } from "../models/Department";
 import { Person } from "../models/Person";
+import { Location } from "../models/Location";
 
 /* ----- Business Controller ----- */
 
@@ -16,11 +18,16 @@ export const createBusiness = async (request: Request, response: Response): Prom
     if (await getRepository(Business).findOne({ where: { rut: request.body.rut } })) return response.status(400).json({ message: 'Ya existe un empresa con ese RUT' });
     if (await getRepository(Business).findOne({ where: { rut: request.body.email } })) return response.status(400).json({ message: 'Ya existe un empresa con ese email' });
     if (await getRepository(Business).findOne({ where: { rut: request.body.businessName } })) return response.status(400).json({ message: 'Ya existe un empresa con ese Nombre' });
+    let department = await getRepository(Department).findOne({where: {id: request.body.departmentId}});
+    let location = await getRepository(Location).findOne({where: {id: request.body.locationId}});
 
-    let { rut, email, businessName } = request.body;
+    if(!location) return response.status(400).json({ message: 'No existe localidad' });
+    if(!department) return response.status(400).json({ message: 'No existe departamento' });
+
+    let { rut, email, businessName, nameFantasy, address, cellphone, phone, BPS, occupation, initDate, observations, logo} = request.body;
 
     let newBusiness = getRepository(Business).create({
-        rut, businessName, email
+        rut, email, businessName, nameFantasy, address, cellphone, phone, BPS, occupation, department, location, initDate, observations, logo
     });
     let savedBusiness = await getRepository(Business).save(newBusiness);
 
@@ -33,6 +40,16 @@ export const getBusinesses = async (request: Request, response: Response): Promi
 
 export const getBusiness = async (request: Request, response: Response): Promise<Response> => {
     return response.status(200).json(await getRepository(Business).findOne({ where: { id: request.params.id } }));
+}
+
+export const  goDown = async (request: Request, response: Response): Promise<Response> => {
+    let business = await getRepository(Business).findOne({ where: { id: request.params.id } });
+
+    if (!business) return response.status(404).json({ message: 'No existe una empresa con ese id' });
+
+    business.state = false;
+    business.leaveDate = new Date();
+    return response.status(200).json(await getRepository(Business).save(business));
 }
 
 //Arreglar un poquito pero anda
