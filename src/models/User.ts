@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, OneToOne } from "typeorm";
+import { Business } from "./Business";
 import { Role } from "./Role";
 
 /* ----- User Model ----- */
@@ -18,11 +19,10 @@ export class User extends BaseEntity {
     @Column({ select: false })
     password: string;
 
-    @Column({ select: false, default: false })
-    confirmedEmail: boolean;
-
     @ManyToMany(() => Role)
     @JoinTable()
     roles: Role[]
 
+    @OneToOne(() => Business, business => business.user)
+    business: Business;
 }

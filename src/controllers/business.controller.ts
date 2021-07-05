@@ -17,7 +17,11 @@ export const createBusiness = async (request: Request, response: Response): Prom
     if (await getRepository(Business).findOne({ where: { rut: request.body.email } })) return response.status(400).json({ message: 'Ya existe un empresa con ese email' });
     if (await getRepository(Business).findOne({ where: { rut: request.body.businessName } })) return response.status(400).json({ message: 'Ya existe un empresa con ese Nombre' });
 
-    let newBusiness = getRepository(Business).create(request.body);
+    let { rut, email, businessName } = request.body;
+
+    let newBusiness = getRepository(Business).create({
+        rut, businessName, email
+    });
     let savedBusiness = await getRepository(Business).save(newBusiness);
 
     return response.status(201).json(savedBusiness);
@@ -35,15 +39,22 @@ export const getBusiness = async (request: Request, response: Response): Promise
 export const putBusiness = async (request: Request, response: Response): Promise<Response> => {
     let business = await getRepository(Business).findOne({ where: { id: request.params.id } })
 
-    if (!business) return response.status(404).json({ message: 'No existe una empresa con ese RUT' });
+    if (!business) return response.status(404).json({ message: 'No existe una empresa con ese id' });
 
     if (request.body.rut && request.body.rut != business.rut) {
         if (await getRepository(Business).findOne({ where: { rut: request.body.rut } })) return response.status(400).json({ message: 'Ya existe una empresa con ese RUT' });
     }
 
-    business = request.body;
+    if (request.body.email && request.body.email != business.email) {
+        if (await getRepository(Business).findOne({ where: { email: request.body.email } })) return response.status(400).json({ message: 'Ya existe una empresa con ese email' });
+    }
+
+    if (request.body.businessName && request.body.businessName != business.businessName) {
+        if (await getRepository(Business).findOne({ where: { businessName: request.body.businessName } })) return response.status(400).json({ message: 'Ya existe una empresa con ese Nombre' });
+    }
+
     if (business) {
-        return response.status(200).json(await getRepository(Business).save(business));
+        return response.status(200).json(await getRepository(Business).update(business, request.body));
     } else {
         return response.status(400).json({ message: 'Response vacio' });
     }
@@ -54,7 +65,7 @@ export const deleteBusiness = async (request: Request, response: Response): Prom
     if (!business) {
         return response.status(400).json({ message: 'No existe una empresa con ese id' });
     } else {
-        await getRepository(Business_Person).delete({bussiness: business});
+        await getRepository(Business_Person).delete({ bussiness: business });
 
         return response.json(await getRepository(Business).delete(business));
     }

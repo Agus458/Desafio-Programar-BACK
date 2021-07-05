@@ -1,7 +1,8 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Business_Person } from "./Business_Person";
 import { Department } from "./Department";
 import { Location } from "./Location";
+import { User } from "./User";
 
 
 @Entity('businesses')
@@ -70,4 +71,7 @@ export class Business extends BaseEntity {
     @OneToMany(() => Business_Person, business_person => business_person.bussiness)
     persons: Business_Person[]
 
+    @OneToOne(() => User, user => user.business)
+    user: User;
+    
 }
