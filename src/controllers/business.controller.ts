@@ -28,12 +28,12 @@ export const getBusinesses = async (request: Request, response: Response): Promi
 }
 
 export const getBusiness = async (request: Request, response: Response): Promise<Response> => {
-    return response.status(200).json(await getRepository(Business).findOne({ where: { rut: request.params.rut } }));
+    return response.status(200).json(await getRepository(Business).findOne({ where: { id: request.params.id } }));
 }
 
 //Arreglar un poquito pero anda
 export const putBusiness = async (request: Request, response: Response): Promise<Response> => {
-    let business = await getRepository(Business).findOne({ where: { rut: request.params.rut } })
+    let business = await getRepository(Business).findOne({ where: { id: request.params.id } })
 
     if (!business) return response.status(404).json({ message: 'No existe una empresa con ese RUT' });
 
@@ -50,9 +50,9 @@ export const putBusiness = async (request: Request, response: Response): Promise
 }
 
 export const deleteBusiness = async (request: Request, response: Response): Promise<Response> => {
-    let business = await getRepository(Business).findOne({ where: { rut: request.params.rut } })
+    let business = await getRepository(Business).findOne({ where: { id: request.params.id } })
     if (!business) {
-        return response.status(400).json({ message: 'No existe una empresa con ese RUT' });
+        return response.status(400).json({ message: 'No existe una empresa con ese id' });
     } else {
         await getRepository(Business_Person).delete({bussiness: business});
 

@@ -10,11 +10,11 @@ router.post('/', [verifyToken], BusinessController.createBusiness);
 
 router.get('/', [verifyToken], BusinessController.getBusinesses);
 
-router.get('/:rut', [verifyToken], BusinessController.getBusiness);
+router.get('/:id', [verifyToken], BusinessController.getBusiness);
 
-router.put('/:rut', [verifyToken], BusinessController.putBusiness);
+router.put('/:id', [verifyToken], BusinessController.putBusiness);
 
-router.delete('/:rut', [verifyToken], BusinessController.deleteBusiness);
+router.delete('/:id', [verifyToken], BusinessController.deleteBusiness);
 
 /* ----- Businnes_Person Routes ----- */
 
