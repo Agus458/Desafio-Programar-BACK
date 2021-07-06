@@ -9,6 +9,7 @@ import departmentRoutes from "./routes/department.routes";
 import locationRoutes from "./routes/location.routes";
 import businessRoutes from "./routes/business.routes";
 import personRoutes from "./routes/person.routes";
+import reportsRoutes from "./routes/reports.routes";
 
 
 const app = express();
@@ -47,5 +48,8 @@ app.use('/api/businesses', businessRoutes);
 
 // Person Routes
 app.use('/api/persons', personRoutes);
+
+// Person Routes
+app.use('/api/reports', reportsRoutes);
 
 export default app;
