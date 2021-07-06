@@ -18,6 +18,7 @@
     "google-auth-library": "^7.2.0",
     "googleapis": "^80.0.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "nodemailer": "^6.6.2",
     "pg": "^8.6.0",
